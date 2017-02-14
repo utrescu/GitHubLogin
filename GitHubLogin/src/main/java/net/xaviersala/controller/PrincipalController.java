@@ -21,5 +21,10 @@ public class PrincipalController {
 		}
 		return "index";
 	}
+	
+//	@RequestMapping("/oauth/error")
+//	public String error() {
+//		return "error";
+//	}
 
 }

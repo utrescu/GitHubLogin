@@ -91,6 +91,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		List<Filter> filters = new ArrayList<>();
 		
 		filters.add(ssoFilter(github(), "/login/github"));
+		filters.add(ssoFilter(twitter(), "/login/twitter"));
+		filters.add(ssoFilter(google(), "/login/google"));
 		
 		filter.setFilters(filters);
 		return filter;
@@ -128,6 +130,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return new ClientResources();
     }
 	
+	/**
+	 * 
+	 * Carrega les dades de configuració de GitHub
+	 *  del fitxer application.yml.
+	 *
+	 *  @Return Dades de configuració de GitHub
+	 **/
+	@Bean
+	@ConfigurationProperties("google")
+	public ClientResources google() {
+		return new ClientResources();
+    }
+	
+	/**
+	 * 
+	 * Carrega les dades de configuració de GitHub
+	 *  del fitxer application.yml.
+	 *
+	 *  @Return Dades de configuració de GitHub
+	 **/
+	@Bean
+	@ConfigurationProperties("twitter")
+	public ClientResources twitter() {
+		return new ClientResources();
+    }
 	
 	/**
 	 * Definim quines són les adreces que no necessiten seguretat.
