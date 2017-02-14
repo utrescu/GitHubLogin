@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ca"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+    <p th:text="Hola + ' ' + ${name}">
+      Hola!
+    </p>
+    <p>
+      Entrar fent servir GitHub
+      <a href="/login/github">Login a Github</a>       
+    </p>
+    <form th:action="@{/logout}" action="/logout" method="post">
+    	
+		<button>Logout</button>
+	</form>
+  </body>
+</html>
