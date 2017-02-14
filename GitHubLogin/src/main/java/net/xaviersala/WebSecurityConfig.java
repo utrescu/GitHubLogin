@@ -1,11 +1,15 @@
 package net.xaviersala;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.Filter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +26,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.filter.CompositeFilter;
 
 /**
  * Configuració de Spring Security però en comptes de fer-ho a l'estil antic
@@ -59,11 +64,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.and().addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
 	}
 	
-	// 
-	// Col·loco filtres abans del funcionament de Security
-	// per poder fer login en diferents proveïdors abans de 
-	// res.
-	//
+	/**
+	 * Col·loco filtres abans del funcionament de Security
+	 * per poder fer login en diferents proveïdors abans de 
+	 * res.
+	 * 
+	 **/ 	
 	@Bean
 	public FilterRegistrationBean oauth2ClientFilterRegistration(OAuth2ClientContextFilter filter) {
 		FilterRegistrationBean registration = new FilterRegistrationBean();
@@ -72,42 +78,57 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return registration;
     }
 
-	//
-	// Defineixo el filtre de Github. Se n'hauria de crear un per cada 
-	// diferent proveïdor.
-	// 
-	// El tinc pensat per fer-ho amb /login/{proveidor}
-	//    -> La configuració està a application.yml <-
-	// 
+	
+	/**
+	 * Defineix el filtre a aplicar abans de fer servir
+	 * Spring Security. Bàsicament es fa servir per fer login
+	 * amb OAuth.
+	 * 
+	 * @return
+	 */
 	private Filter ssoFilter() {
-		OAuth2ClientAuthenticationProcessingFilter githubFilter = new OAuth2ClientAuthenticationProcessingFilter(
-				"/login/github");
-		OAuth2RestTemplate githubTemplate = new OAuth2RestTemplate(github(), oauth2ClientContext);
-		githubFilter.setRestTemplate(githubTemplate);
-		UserInfoTokenServices tokenServices = new UserInfoTokenServices(githubResource().getUserInfoUri(),
-				github().getClientId());
-		tokenServices.setRestTemplate(githubTemplate);
-		githubFilter.setTokenServices(tokenServices);
-		return githubFilter;
-	}
-
-	//
-	// Recuperar la inforamció del fitxer de configuració
-	// application.yml
-	// 
-	@Bean
-	@ConfigurationProperties("github.client")
-	public AuthorizationCodeResourceDetails github() {
-		return new AuthorizationCodeResourceDetails();
-	}
-
-	@Bean
-	@ConfigurationProperties("github.resource")
-	public ResourceServerProperties githubResource() {
+		CompositeFilter filter = new CompositeFilter();
+		List<Filter> filters = new ArrayList<>();
 		
-		return new ResourceServerProperties();
+		filters.add(ssoFilter(github(), "/login/github"));
+		
+		filter.setFilters(filters);
+		return filter;
 	}
 
+	/**
+	 * Crea un filtre a partir de les dades de configuració del proveïdor i 
+	 * de la URL que ha de login.
+	 * 
+	 * @param client Dades per fer OAuth
+	 * @param path URL de login
+	 * @return
+	 */
+	private Filter ssoFilter(ClientResources client, String path) {
+		OAuth2ClientAuthenticationProcessingFilter oAuth2ClientAuthenticationFilter = new OAuth2ClientAuthenticationProcessingFilter(path);
+		OAuth2RestTemplate oAuth2RestTemplate = new OAuth2RestTemplate(client.getClient(), oauth2ClientContext);
+		oAuth2ClientAuthenticationFilter.setRestTemplate(oAuth2RestTemplate);
+		UserInfoTokenServices tokenServices = new UserInfoTokenServices(client.getResource().getUserInfoUri(),
+				client.getClient().getClientId());
+		tokenServices.setRestTemplate(oAuth2RestTemplate);
+		oAuth2ClientAuthenticationFilter.setTokenServices(tokenServices);
+		return oAuth2ClientAuthenticationFilter;
+    }	
+	
+	/**
+	 * 
+	 * Carrega les dades de configuració de GitHub
+	 *  del fitxer application.yml.
+	 *
+	 *  @Return Dades de configuració de GitHub
+	 **/
+	@Bean
+	@ConfigurationProperties("github")
+	public ClientResources github() {
+		return new ClientResources();
+    }
+	
+	
 	/**
 	 * Definim quines són les adreces que no necessiten seguretat.
 	 * 
@@ -118,5 +139,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/js/**", "/css/**", "/images/**", "/fonts/**");
 	}
+	
+	/**
+	 * Classe interna per emmagatzemar les dades de cada proveïdor diferent
+	 * i no haver de repetir el codi. 
+	 * 
+	 * @author xavier
+	 *
+	 */
+	class ClientResources {
+
+		@NestedConfigurationProperty
+		private AuthorizationCodeResourceDetails client = new AuthorizationCodeResourceDetails();
+
+		@NestedConfigurationProperty
+		private ResourceServerProperties resource = new ResourceServerProperties();
+
+		public AuthorizationCodeResourceDetails getClient() {
+			return client;
+		}
+
+		public ResourceServerProperties getResource() {
+			return resource;
+		};
+	};
 
 }
