@@ -3,18 +3,19 @@
 	xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Login social</title>
 </head>
 <body>
-    <p th:text="Hola + ' ' + ${name}">
+
+    <h1 th:text="Hola + ' ' + ${name}">
       Hola!
-    </p>
+    </h1>
     <p>
       Entrar fent servir GitHub
       <a href="/login/github">Login a Github</a>       
     </p>
-    <form th:action="@{/logout}" action="/logout" method="post">
-    	
+    
+    <form th:action="@{/logout}" action="/logout" method="post">    	
 		<button>Logout</button>
 	</form>
   </body>
