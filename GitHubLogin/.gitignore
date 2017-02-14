@@ -23,6 +23,5 @@ dist/
 nbdist/
 .nb-gradle/
 
-application-secret.yml
 /mvnw
 /mvnw.cmd
