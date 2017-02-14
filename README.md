@@ -42,7 +42,7 @@ Després s'omplen les dades:
 
 És important definir la URL de redirecció i que coincideixi amb la que fem servir, */login/google*, perquè sinó denegarà l'accés.
 
-En el mateix lloc es pot veure que hi ha un JSON que es pot descarregar que diu quin és el contingut a emplenar en la configuració. En el meu cas:
+En el mateix lloc es pot veure que hi ha un JSON que es pot descarregar que diu quin és el contingut a emplenar en la configuració (especialment les URL). En el meu cas:
 
     google:
     client:
