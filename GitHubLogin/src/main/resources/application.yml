@@ -21,6 +21,28 @@ google:
   resource:
     userInfoUri: https://www.googleapis.com/oauth2/v2/userinfo
 
+facebook:
+      client:
+        clientId: xxxxxxxxxxxxxxxxxxxxxxxxxx
+        clientSecret: 3xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        accessTokenUri: https://graph.facebook.com/oauth/access_token
+        userAuthorizationUri: https://www.facebook.com/dialog/oauth
+        tokenName: oauth_token
+        authenticationScheme: query
+        clientAuthenticationScheme: form
+      resource:
+        userInfoUri: https://graph.facebook.com/me
+
+twitter:
+  client:
+    clientId: notworking   
+    clientSecret: notworking
+    accessTokenUri: https://api.twitter.com/oauth/notworking
+    userAuthorizationUri: https://api.twitter.com/oauth/notworking
+    clientAuthenticationScheme: form
+  resource:
+    userInfoUri: https://api.twitter.com/notworking
+
 logging:
   level:
       org.springframework.security: DEBUG 
