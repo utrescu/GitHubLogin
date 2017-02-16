@@ -1,5 +1,5 @@
 # GitHubLogin
-Exemple de ús de login social fent servir diferents proveïdors de OAuth2: 
+Exemple de ús de login social fent servir diferents proveïdors de OAuth2:
 
 L'he deixat tant senzill com he pogut perquè sigui fàcil d'entendre però que no sigui massa complicat afegir altres proveïdors
 
@@ -15,7 +15,7 @@ i s'omple la configuració de l'aplicació. En el meu cas és com aquesta:
 
 Només cal copiar la clau i el secret que ha donat (estan per sobre).
 
-Només cal definir la configuració adequada en application.yml amb les dades de client i secret correctes: 
+Només cal definir la configuració adequada en application.yml amb les dades de client i secret correctes:
 
     github:
     client:
@@ -30,6 +30,7 @@ Només cal definir la configuració adequada en application.yml amb les dades de
 
 
 ### Google
+
 Per poder fer servir el OAuth2 de Google s'ha d'accedir a la [consola de desenvolupadors](https://console.developers.google.com), s'hi crea un projecte nou.
 
 En l'apartat de credencials es registra una credendencial OAuth Client ID:
@@ -45,7 +46,7 @@ Després s'omplen les dades:
 En el mateix lloc es pot veure que hi ha un JSON que es pot descarregar que diu quin és el contingut a emplenar en la configuració (especialment les URL). En el meu cas:
 
     google:
-    client:
+      client:
         clientId: xxxx.apps.googleusercontent.com
         clientSecret: xxxxxxxxxxxxxxxx
         accessTokenUri: https://accounts.google.com/o/oauth2/token
@@ -54,9 +55,26 @@ En el mateix lloc es pot veure que hi ha un JSON que es pot descarregar que diu 
         scope:
         - email
         - profile
-    resource:
+      resource:
         userInfoUri: https://www.googleapis.com/oauth2/v2/userinfo
 
+### Facebook
+
+Més o menys el mateix que en els anteriors: Registrar l'aplicació i cercar com s'han de definir les URL:
+
+    facebook:
+      client:
+        clientId: 233668646673605
+        clientSecret: 33b17e044ee6a4fa383f46ec6e28ea1d
+        accessTokenUri: https://graph.facebook.com/oauth/access_token
+        userAuthorizationUri: https://www.facebook.com/dialog/oauth
+        tokenName: oauth_token
+        authenticationScheme: query
+        clientAuthenticationScheme: form
+      resource:
+        userInfoUri: https://graph.facebook.com/me
+
 ### Twitter
+Per registrar l'aplicació a Twitter hem de crear-la en la web de [apps](https://apps.twitter.com/)
 
 WORK In progress

@@ -6,7 +6,9 @@
 <title>Login social</title>
 </head>
 <body>
-
+	<div th:if="${error}">
+		Error d'identificació (bad credentials).
+	</div>
     <h1 th:text="Hola + ' ' + ${name}">
       Hola!
     </h1>
@@ -18,7 +20,11 @@
       Entrar fent servir Google
       <a href="/login/google">Login a Google</a>       
     </p>    
-     <p>
+     <p>         
+      Entrar fent servir Facebook
+      <a href="/login/facebook">Login a Facebook</a>       
+    </p> 
+    <p>   
       Entrar fent servir Twitter
       <a href="/login/twitter">Login a Twitter</a>       
     </p>

@@ -7,14 +7,20 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class PrincipalController {
 	
 	@RequestMapping("/")
-	public String arrel(Principal principal, Model model) {
+	public String arrel(Principal principal, @RequestParam(value = "error", required=false) boolean error, Model model) {
 		Map<String, String> map = new LinkedHashMap<>();
+		if (error) {
+			model.addAttribute("error", true);
+		}
+		
 		if (principal!=null) {
+			
 			model.addAttribute("name",principal.getName());
 		} else {
 			model.addAttribute("name","anònim");
@@ -22,9 +28,9 @@ public class PrincipalController {
 		return "index";
 	}
 	
-//	@RequestMapping("/oauth/error")
-//	public String error() {
-//		return "error";
-//	}
+	@RequestMapping("/unauthenticated")
+	public String unauthenticated() {
+	  return "redirect:/?error=true";
+	}
 
 }
